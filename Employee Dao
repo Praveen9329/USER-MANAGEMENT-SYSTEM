@@ -1,0 +1,126 @@
+package com.miniproject.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import com.miniproject.model.Employee;
+
+public class EmployeeDao 
+{ private static Connection con=null;
+  private static PreparedStatement pt=null;
+  private static Statement s=null;
+  private static ResultSet rs=null;
+  
+  public static void insert(Employee employee)
+  {
+	  try {
+		Class.forName("com.mysql.cj.jdbc.Driver");
+	    con=DriverManager.getConnection("jdbc:mysql://localhost:3306/palle","root","PRAVEEN@93");
+	
+	String qry="insert into employeev(name,email,mobile) values(?,?,?)";
+     pt=con.prepareStatement(qry);
+     pt.setString(1,employee.getName());
+     pt.setString(2,employee.getEmail());
+     pt.setLong(3, employee.getMobile());
+     
+     pt.executeUpdate();
+	
+	
+	
+	}
+	  catch (ClassNotFoundException e) 
+	  {
+		e.printStackTrace();
+	  } 
+	  catch (SQLException e)
+	  {
+		e.printStackTrace();
+	  }
+	  finally 
+	  {
+		  if(pt!=null)
+		  {
+			  try {
+				pt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		  }
+		  if(con!=null)
+		  {
+			  try {
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		  }
+		  
+	  }
+  }
+  public static ArrayList<Employee> display()
+  {
+	  ArrayList<Employee> a1=new ArrayList<Employee>();
+	  
+	  try {
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		con=DriverManager.getConnection("jdbc:mysql://localhost:3306/palle","root","PRAVEEN@93");
+		s=con.createStatement();
+		rs=s.executeQuery("select * from employeev");
+		
+		while(rs.next())
+		{
+			int id=rs.getInt("id");
+			String name=rs.getString("name");
+			String email=rs.getString("email");
+			long mobile=rs.getLong("mobile");
+			Employee employee=new Employee(id, name, email, mobile);
+			a1.add(employee);
+		}
+	} catch (ClassNotFoundException e) {
+		
+		e.printStackTrace();
+	}catch (SQLException e) {
+		
+		e.printStackTrace();
+	}
+	  
+	  finally
+	  {
+		  if(rs!=null)
+		  {
+			  try {
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  }
+		  if(s!=null)
+		  {
+			  try {
+				s.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  }
+		  if(con!=null)
+		  {
+			  try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  }
+	  }
+	return a1;
+  }
+  
+
+}
